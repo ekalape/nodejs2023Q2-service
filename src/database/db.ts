@@ -1,3 +1,4 @@
+import { Artist } from 'src/artist/entities/artist.entity';
 import { User } from 'src/users/entities/user.entity';
 
 class DBInstance<T extends { id: string }> {
@@ -24,3 +25,4 @@ class DBInstance<T extends { id: string }> {
 }
 
 export const usersDB = new DBInstance<User>();
+export const artistDB = new DBInstance<Artist>();

@@ -33,7 +33,7 @@ export class UsersService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    const { oldPassword, newPassword } = updateUserDto
+    const { oldPassword, newPassword } = updateUserDto;
     const user = usersDB.findbyID(id);
     if (!user) throw new NotFoundException();
     if (user.password !== oldPassword) throw new ForbiddenException();
