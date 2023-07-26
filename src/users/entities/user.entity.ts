@@ -17,15 +17,20 @@ export class User {
     }
 
     info() {
-        const createdDate = new Date(this.createdAt).toLocaleString();
-        const updatedDate = new Date(this.updatedAt).toLocaleString();
-        return { id: this.id, login: this.login, version: this.version, createdAt: createdDate, updatedAt: updatedDate }
+        /*     const createdDate = new Date(this.createdAt).toLocaleString();
+            const updatedDate = new Date(this.updatedAt).toLocaleString(); */
+        return {
+            id: this.id,
+            login: this.login,
+            version: this.version,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+        };
     }
     changePassword(pass: string) {
         this.password = pass;
         this.version += 1;
-        this.updatedAt = Date.now()
+        this.updatedAt = Date.now();
+        console.log("Done")
     }
-
-
 }

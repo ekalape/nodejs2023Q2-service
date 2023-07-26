@@ -1,3 +1,1 @@
-class FavsDB {
-
-}
+class FavsDB {}
