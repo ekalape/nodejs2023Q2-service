@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { artistDB, trackDB } from 'src/database/db';
+import { albumDB, artistDB, trackDB } from 'src/database/db';
 
 @Injectable()
 export class ArtistService {
@@ -33,9 +33,12 @@ export class ArtistService {
     const artist = artistDB.findbyID(id);
     if (!artist) throw new NotFoundException();
     artistDB.deleteOne(id);
-    trackDB.getAll().forEach(tr => {
-      if (tr.artistId === id) tr.artistId = null
-    })
+    trackDB.getAll().forEach((tr) => {
+      if (tr.artistId === id) tr.artistId = null;
+    });
+    albumDB.getAll().forEach((a) => {
+      if (a.artistId === id) a.artistId = null;
+    });
     return artist;
   }
 }

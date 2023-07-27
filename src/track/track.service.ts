@@ -8,9 +8,8 @@ import { trackDB } from 'src/database/db';
 export class TrackService {
   create(createTrackDto: CreateTrackDto) {
     const track = new Track(createTrackDto);
-    trackDB.addOne(track)
+    trackDB.addOne(track);
     return track;
-
   }
 
   findAll() {
