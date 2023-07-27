@@ -3,9 +3,11 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { albumDB, trackDB } from 'src/database/db';
 import { Album } from './entities/album.entity';
+import { FavsService } from 'src/favs/favs.service';
 
 @Injectable()
 export class AlbumService {
+  constructor(private readonly favsService: FavsService) {}
   create(createAlbumDto: CreateAlbumDto) {
     const album = new Album(createAlbumDto);
     albumDB.addOne(album);
@@ -35,6 +37,9 @@ export class AlbumService {
     trackDB.getAll().forEach((tr) => {
       if (tr.albumId === id) tr.albumId = null;
     });
+    try {
+      this.favsService.deleteFromFavs('album', id);
+    } catch (e) {}
     return album;
   }
 }
