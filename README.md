@@ -1,49 +1,13 @@
 # Home Library Service
 
-## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+## How to start: 
+ 1. Clone repo: __git clone https://github.com/ekalape/nodejs2023Q2-service.git__
+ 2. Install dependencies, switch to develop branch
+ 3. Create .env file copying .env.example (optional) to the same directory
+ 4. Use __npm start__ or __npm run start:dev__ to start server
+ 5. Use __npm run test__ for Testing
+ 6. Use __https://editor-next.swagger.io/__ to see OpenAPI documentation (File->Import file->doc/api.yaml)
 
-## Downloading
 
-```
-git clone {repository URL}
-```
-
-## Installing NPM modules
-
-```
-npm install
-```
-
-## Running application
-
-```
-npm start
-```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
-
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-### Auto-fix and format
-
-```
-npm run lint
-```
-
-```
-npm run format
-```
-
+Server starts on 
