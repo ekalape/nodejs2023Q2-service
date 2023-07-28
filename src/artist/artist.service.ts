@@ -4,7 +4,6 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { albumDB, artistDB, trackDB } from 'src/database/db';
 import { FavsService } from 'src/favs/favs.service';
-import { favsDB } from 'src/database/favsDB';
 
 @Injectable()
 export class ArtistService {
@@ -42,7 +41,8 @@ export class ArtistService {
     albumDB.getAll().forEach((a) => {
       if (a.artistId === id) a.artistId = null;
     });
-    const favArtist = favsDB.findArtist(id)
+    const favArtist = await this.favsService.findOne("artist", id)
+    console.log("artist fount ---> ", favArtist)
     if (favArtist) await this.favsService.deleteFromFavs('artist', id);
 
     return artist;

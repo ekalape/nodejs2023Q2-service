@@ -4,7 +4,6 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { trackDB } from 'src/database/db';
 import { FavsService } from 'src/favs/favs.service';
-import { favsDB } from 'src/database/favsDB';
 
 @Injectable()
 export class TrackService {
@@ -36,8 +35,8 @@ export class TrackService {
     if (!track) throw new NotFoundException();
     trackDB.deleteOne(id);
 
+    const favTrack = await this.favsService.findOne("track", id)
 
-    const favTrack = favsDB.findTrack(id)
     if (favTrack) await this.favsService.deleteFromFavs('track', id);
 
     return track;

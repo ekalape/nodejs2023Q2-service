@@ -1,8 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Track } from 'src/track/entities/track.entity';
-
-class FAVSDB {
+@Injectable()
+export class FAVSDB {
   private artists: Artist[];
   private tracks: Track[];
   private albums: Album[];
@@ -61,4 +62,3 @@ class FAVSDB {
   }
 }
 
-export const favsDB = new FAVSDB();
