@@ -10,4 +10,4 @@ import { FAVSDB } from 'src/database/favsDB';
   controllers: [ArtistController],
   providers: [ArtistService, FAVSDB],
 })
-export class ArtistModule { }
+export class ArtistModule {}

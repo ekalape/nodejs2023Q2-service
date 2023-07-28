@@ -10,4 +10,4 @@ import { FAVSDB } from 'src/database/favsDB';
   controllers: [AlbumController],
   providers: [AlbumService, FAVSDB],
 })
-export class AlbumModule { }
+export class AlbumModule {}

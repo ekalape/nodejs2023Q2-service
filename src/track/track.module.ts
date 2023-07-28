@@ -10,4 +10,4 @@ import { FAVSDB } from 'src/database/favsDB';
   controllers: [TrackController],
   providers: [TrackService, FAVSDB],
 })
-export class TrackModule { }
+export class TrackModule {}

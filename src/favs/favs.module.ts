@@ -10,4 +10,4 @@ import { FAVSDB } from 'src/database/favsDB';
   providers: [FavsService, FAVSDB],
   exports: [FavsService],
 })
-export class FavsModule { }
+export class FavsModule {}

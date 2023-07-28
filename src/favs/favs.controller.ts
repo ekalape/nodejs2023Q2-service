@@ -13,7 +13,7 @@ import { favsEndpoints } from 'src/utils/favsEndpoints';
 
 @Controller('favs')
 export class FavsController {
-  constructor(private readonly favsService: FavsService) { }
+  constructor(private readonly favsService: FavsService) {}
 
   @Get()
   async findAll() {
@@ -31,7 +31,8 @@ export class FavsController {
   @HttpCode(204)
   @Delete(':subpoint/:id')
   async remove(
-    @Param('subpoint', new ParseEnumPipe(favsEndpoints)) subpoint: string,
+    @Param('subpoint', new ParseEnumPipe(favsEndpoints))
+    subpoint: favsEndpoints,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return await this.favsService.deleteFromFavs(subpoint, id);
