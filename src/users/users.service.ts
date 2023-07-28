@@ -11,7 +11,7 @@ import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
   async create(createUserDto: CreateUserDto) {
     const { login, password } = createUserDto;
     const existentUser = this.db.usersDB
@@ -30,15 +30,14 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = this.db.usersDB.findbyID(id);
-    if (!user) throw new NotFoundException();
+    if (!user) return null;
     return user.info();
-    //return `This action returns a #${id} user`;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const { oldPassword, newPassword } = updateUserDto;
     const user = this.db.usersDB.findbyID(id);
-    if (!user) throw new NotFoundException();
+    if (!user) return null;
     if (user.password !== oldPassword) throw new ForbiddenException();
     user.changePassword(newPassword);
     return user.info();
@@ -46,7 +45,7 @@ export class UsersService {
 
   async remove(id: string) {
     const user = this.db.usersDB.findbyID(id);
-    if (!user) throw new NotFoundException();
+    if (!user) return null;
     this.db.usersDB.deleteOne(id);
     return user.info();
   }

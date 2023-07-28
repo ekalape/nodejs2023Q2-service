@@ -10,6 +10,7 @@ import {
   UsePipes,
   ParseUUIDPipe,
   HttpCode,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,7 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @UsePipes(new ValidationPipe())
   @Post()
@@ -32,7 +33,9 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.usersService.findOne(id);
+    const user = await this.usersService.findOne(id);
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
   @UsePipes(new ValidationPipe())
@@ -42,12 +45,16 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.usersService.update(id, updateUserDto);
+    const user = await this.usersService.update(id, updateUserDto);
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.usersService.remove(id);
+    const user = await this.usersService.remove(id);
+    if (!user) throw new NotFoundException();
+    return user;
   }
 }

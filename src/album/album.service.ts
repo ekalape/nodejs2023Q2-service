@@ -1,7 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-//import { albumDB, trackDB } from 'src/database/db';
 import { Album } from './entities/album.entity';
 import { FavsService } from 'src/favs/favs.service';
 import { DatabaseService } from 'src/database/database.service';
@@ -12,7 +11,7 @@ export class AlbumService {
   constructor(
     private readonly favsService: FavsService,
     private readonly db: DatabaseService,
-  ) {}
+  ) { }
   async create(createAlbumDto: CreateAlbumDto) {
     const album = new Album(createAlbumDto);
     this.db.albumDB.addOne(album);
@@ -25,19 +24,19 @@ export class AlbumService {
 
   async findOne(id: string) {
     const album = this.db.albumDB.findbyID(id);
-    if (!album) throw new NotFoundException();
+    if (!album) return null;
     return this.db.albumDB.findbyID(id);
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
     const album = this.db.albumDB.findbyID(id);
-    if (!album) throw new NotFoundException();
+    if (!album) return null;
     return album.update(updateAlbumDto);
   }
 
   async remove(id: string) {
     const album = this.db.albumDB.findbyID(id);
-    if (!album) throw new NotFoundException();
+    if (!album) return null;
     this.db.albumDB.deleteOne(id);
     this.db.trackDB.getAll().forEach((tr) => {
       if (tr.albumId === id) tr.albumId = null;

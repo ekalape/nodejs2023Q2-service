@@ -10,6 +10,7 @@ import {
   Put,
   UsePipes,
   ValidationPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -17,7 +18,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(private readonly albumService: AlbumService) { }
 
   @UsePipes(new ValidationPipe())
   @Post()
@@ -32,7 +33,9 @@ export class AlbumController {
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.albumService.findOne(id);
+    const album = await this.albumService.findOne(id);
+    if (!album) throw new NotFoundException()
+    return album
   }
 
   @UsePipes(new ValidationPipe())
@@ -41,12 +44,16 @@ export class AlbumController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    return await this.albumService.update(id, updateAlbumDto);
+    const album = await this.albumService.update(id, updateAlbumDto);
+    if (!album) throw new NotFoundException()
+    return album
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.albumService.remove(id);
+    const album = await this.albumService.remove(id);
+    if (!album) throw new NotFoundException()
+    return album
   }
 }
