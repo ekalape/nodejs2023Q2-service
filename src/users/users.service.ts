@@ -11,7 +11,7 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     const { login, password } = createUserDto;
     const existentUser = usersDB.getAll().find((x) => x.login === login);
     if (existentUser) throw new BadRequestException('User already exists');
@@ -20,19 +20,19 @@ export class UsersService {
     return newUser.info();
   }
 
-  findAll() {
+  async findAll() {
     const allusers = usersDB.getAll().map((x) => x.info());
     return allusers;
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     const user = usersDB.findbyID(id);
     if (!user) throw new NotFoundException();
     return user.info();
     //return `This action returns a #${id} user`;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const { oldPassword, newPassword } = updateUserDto;
     const user = usersDB.findbyID(id);
     if (!user) throw new NotFoundException();
@@ -41,7 +41,7 @@ export class UsersService {
     return user.info();
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     const user = usersDB.findbyID(id);
     if (!user) throw new NotFoundException();
     usersDB.deleteOne(id);

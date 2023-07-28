@@ -11,7 +11,7 @@ import { favsEndpoints } from 'src/utils/favsEndpoints';
 
 @Injectable()
 export class FavsService {
-  findAll() {
+  async findAll() {
     return {
       artists: favsDB.getFavArtist(),
       albums: favsDB.getFavAlbums(),
@@ -19,8 +19,7 @@ export class FavsService {
     };
   }
 
-  addToFavs(subpoint: string, id: string) {
-    console.log(`subpoint in service --> `, subpoint);
+  async addToFavs(subpoint: string, id: string) {
     if (subpoint === favsEndpoints.ARTIST) {
       const artist = artistDB.findbyID(id);
       if (!artist) throw new UnprocessableEntityException();
@@ -54,7 +53,7 @@ export class FavsService {
     } else throw new BadRequestException();
   }
 
-  deleteFromFavs(subpoint: string, id: string) {
+  async deleteFromFavs(subpoint: string, id: string) {
     if (subpoint === favsEndpoints.ARTIST) {
       const deleted = favsDB.deleteArtist(id);
       if (!deleted) throw new NotFoundException();

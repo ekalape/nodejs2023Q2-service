@@ -4,34 +4,35 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { albumDB, artistDB, trackDB } from 'src/database/db';
 import { FavsService } from 'src/favs/favs.service';
+import { favsDB } from 'src/database/favsDB';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly favsService: FavsService) {}
-  create(createArtistDto: CreateArtistDto) {
+  constructor(private readonly favsService: FavsService) { }
+  async create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;
     const artist = new Artist(name, grammy);
     artistDB.addOne(artist);
     return artist;
   }
 
-  findAll() {
+  async findAll() {
     return artistDB.getAll();
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     const artist = artistDB.findbyID(id);
     if (!artist) throw new NotFoundException();
     return artistDB.findbyID(id);
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
     const artist = artistDB.findbyID(id);
     if (!artist) throw new NotFoundException();
     return artist.update(updateArtistDto);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     const artist = artistDB.findbyID(id);
     if (!artist) throw new NotFoundException();
     artistDB.deleteOne(id);
@@ -41,9 +42,9 @@ export class ArtistService {
     albumDB.getAll().forEach((a) => {
       if (a.artistId === id) a.artistId = null;
     });
-    try {
-      this.favsService.deleteFromFavs('artist', id);
-    } catch (e) {}
+    const favArtist = favsDB.findArtist(id)
+    if (favArtist) await this.favsService.deleteFromFavs('artist', id);
+
     return artist;
   }
 }
