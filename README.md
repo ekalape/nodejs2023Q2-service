@@ -7,7 +7,7 @@
  3. Create .env file copying .env.example (optional) to the same directory
  4. Use __npm start__ or __npm run start:dev__ to start server
  5. Use __npm run test__ for Testing
- 6. Use __https://editor-next.swagger.io/__ to see OpenAPI documentation (File->Import file->doc/api.yaml)
+ 6. Api documentation you can find on __localhost:4000/doc__ (or use __https://editor-next.swagger.io/__ (File->Import file->doc/api.yaml))
 
 
-Server starts on 
+Server run on port 4000 
