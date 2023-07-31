@@ -18,7 +18,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) { }
+  constructor(private readonly albumService: AlbumService) {}
 
   @UsePipes(new ValidationPipe())
   @Post()
@@ -34,8 +34,8 @@ export class AlbumController {
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const album = await this.albumService.findOne(id);
-    if (!album) throw new NotFoundException()
-    return album
+    if (!album) throw new NotFoundException();
+    return album;
   }
 
   @UsePipes(new ValidationPipe())
@@ -45,15 +45,15 @@ export class AlbumController {
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
     const album = await this.albumService.update(id, updateAlbumDto);
-    if (!album) throw new NotFoundException()
-    return album
+    if (!album) throw new NotFoundException();
+    return album;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const album = await this.albumService.remove(id);
-    if (!album) throw new NotFoundException()
-    return album
+    if (!album) throw new NotFoundException();
+    return album;
   }
 }

@@ -11,7 +11,7 @@ export class ArtistService {
   constructor(
     private readonly favsService: FavsService,
     private readonly db: DatabaseService,
-  ) { }
+  ) {}
   async create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;
     const artist = new Artist(name, grammy);

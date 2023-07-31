@@ -11,7 +11,7 @@ export class AlbumService {
   constructor(
     private readonly favsService: FavsService,
     private readonly db: DatabaseService,
-  ) { }
+  ) {}
   async create(createAlbumDto: CreateAlbumDto) {
     const album = new Album(createAlbumDto);
     this.db.albumDB.addOne(album);

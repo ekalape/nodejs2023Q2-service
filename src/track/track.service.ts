@@ -11,7 +11,7 @@ export class TrackService {
   constructor(
     private readonly favsService: FavsService,
     private readonly db: DatabaseService,
-  ) { }
+  ) {}
   async create(createTrackDto: CreateTrackDto) {
     const track = new Track(createTrackDto);
     this.db.trackDB.addOne(track);
