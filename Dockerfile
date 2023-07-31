@@ -1,7 +1,7 @@
-FROM node:18
+FROM node:18-alpine3.17
 
 # Create app directory
-WORKDIR /restWithNest
+WORKDIR /app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -20,4 +20,5 @@ EXPOSE 4000
 
 RUN npm run build
 
-CMD [ "node", "dist/main.js" ]
+#CMD [ "node", "dist/main.js" ]
+CMD [ "npm", "run", "start:dev" ]

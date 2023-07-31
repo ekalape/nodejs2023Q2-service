@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  app:
+    #image: cat/library-service-app
+    container_name: lib-service-container
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+    volumes: 
+      - .:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:4020/db
+      NODE_ENV: development
+      PORT: 4000
+    ports: -"4100:4000"
+    command: npm run start:dev
+    restart: always
+    network: lib-service-network
+  
+  postgres:
+    container_name: pg-db-container
+    image: postgres:15.3-alpine3.17
+    restart: always
+    ports:
+      - "40200:4020"
+      
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    volumes:
+      - pgdata: /var/lib/postgresql/data
+    network: lib-service-network
+
+
+volume: pgdata
+
+

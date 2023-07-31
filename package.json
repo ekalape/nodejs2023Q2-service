@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "dock:build": "docker build -t cat/library-service-app .",
-    "dock:run": "docker run -dp 127.0.0.1:4000:4000 --name lib-service-container cat/library-service-app",
+    "dock:run": "docker run -dp 127.0.0.1:4100:4000 --name lib-service-container cat/library-service-app",
     "dock:test": "docker exec -it lib-service-container npm run test",
     "dock:stop": "docker stop lib-service-container"
   },
