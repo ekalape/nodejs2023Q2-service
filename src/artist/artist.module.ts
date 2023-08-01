@@ -6,8 +6,8 @@ import { FavsModule } from 'src/favs/favs.module';
 import { FAVSDB } from 'src/database/favsDB';
 
 @Module({
-  imports: [FavsModule, DatabaseModule],
+  imports: [FavsModule],
   controllers: [ArtistController],
   providers: [ArtistService, FAVSDB],
 })
-export class ArtistModule {}
+export class ArtistModule { }

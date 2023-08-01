@@ -1,4 +1,4 @@
-FROM node:18-alpine3.17
+FROM node:lts-alpine
 
 # Create app directory
 WORKDIR /app
@@ -7,8 +7,11 @@ WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
+COPY prisma ./prisma/
 
-RUN npm ci
+
+RUN npm install && npm cache clean --force
+#RUN npx prisma generate
 
 # If you are building your code for production
 #RUN npm ci --omit=dev
@@ -16,9 +19,10 @@ RUN npm ci
 # Bundle app source
 COPY . .
 
-EXPOSE 4000
+EXPOSE ${PORT}
+
 
 RUN npm run build
 
 #CMD [ "node", "dist/main.js" ]
-CMD [ "npm", "run", "start:dev" ]
+CMD [ "npm", "run", "start:migrate-watch" ]

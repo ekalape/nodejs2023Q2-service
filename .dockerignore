@@ -1,4 +1,13 @@
 node_modules
+dist
+.git
+customHttpCheck
+coverage
+pgdata
 
-.env
+.env.example
+.gitignore
+docker-compose.yml
+Dockerfile
 npm-debug.log
+README.md

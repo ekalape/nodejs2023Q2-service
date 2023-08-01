@@ -6,8 +6,8 @@ import { FavsModule } from 'src/favs/favs.module';
 import { FAVSDB } from 'src/database/favsDB';
 
 @Module({
-  imports: [FavsModule, DatabaseModule],
+  imports: [FavsModule],
   controllers: [TrackController],
   providers: [TrackService, FAVSDB],
 })
-export class TrackModule {}
+export class TrackModule { }

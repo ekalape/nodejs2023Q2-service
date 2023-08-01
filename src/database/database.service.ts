@@ -4,24 +4,33 @@ import { User } from 'src/users/entities/user.entity';
 import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Track } from 'src/track/entities/track.entity';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class DatabaseService {
-  usersDB: DBInstance<User>;
-  artistDB: DBInstance<Artist>;
-  trackDB: DBInstance<Track>;
-  albumDB: DBInstance<Album>;
+export class DatabaseService extends PrismaClient {
+  /*   usersDB: DBInstance<User>;
+    artistDB: DBInstance<Artist>;
+    trackDB: DBInstance<Track>;
+    albumDB: DBInstance<Album>; */
   constructor() {
-    this.usersDB = new DBInstance<User>();
-    this.artistDB = new DBInstance<Artist>();
-    this.trackDB = new DBInstance<Track>();
-    this.albumDB = new DBInstance<Album>();
+    super()
+    /*     this.usersDB = new DBInstance<User>();
+        this.artistDB = new DBInstance<Artist>();
+        this.trackDB = new DBInstance<Track>();
+        this.albumDB = new DBInstance<Album>(); */
   }
 
   async onModuleInit() {
-    //await createDB
+    await this.$connect();
   }
-  async enableShutdownHooks(app: INestApplication) {
-    await app.close();
+
+  async onModuleDestroy() {
+    await this.$disconnect
   }
+
+  /*   async enableShutdownHooks(app: INestApplication) {
+      this.$on('beforeExit', async () => {
+        await app.close();
+      });
+    } */
 }

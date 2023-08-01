@@ -11,41 +11,59 @@ export class AlbumService {
   constructor(
     private readonly favsService: FavsService,
     private readonly db: DatabaseService,
-  ) {}
+  ) { }
   async create(createAlbumDto: CreateAlbumDto) {
-    const album = new Album(createAlbumDto);
-    this.db.albumDB.addOne(album);
-    return album;
+    return this.db.album.create({ data: createAlbumDto })
+    /*     const album = new Album(createAlbumDto);
+        this.db.albumDB.addOne(album);
+        return album; */
   }
 
   async findAll() {
-    return this.db.albumDB.getAll();
+    return this.db.album.findMany()
+    /*  return this.db.albumDB.getAll(); */
   }
 
   async findOne(id: string) {
-    const album = this.db.albumDB.findbyID(id);
-    if (!album) return null;
-    return this.db.albumDB.findbyID(id);
+    return this.db.album.findUnique({
+      where: {
+        id
+      }
+    })
+    /*     const album = this.db.albumDB.findbyID(id);
+        if (!album) return null;
+        return this.db.albumDB.findbyID(id); */
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.db.albumDB.findbyID(id);
-    if (!album) return null;
-    return album.update(updateAlbumDto);
+    return this.db.album.update({
+      where: {
+        id
+      },
+      data: updateAlbumDto
+    })
+    /*     const album = this.db.albumDB.findbyID(id);
+        if (!album) return null;
+        return album.update(updateAlbumDto); */
   }
 
   async remove(id: string) {
-    const album = this.db.albumDB.findbyID(id);
-    if (!album) return null;
-    this.db.albumDB.deleteOne(id);
-    this.db.trackDB.getAll().forEach((tr) => {
-      if (tr.albumId === id) tr.albumId = null;
-    });
-
-    const favAlbum = await this.favsService.findOne(favsEndpoints.ALBUM, id);
-    if (favAlbum)
-      await this.favsService.deleteFromFavs(favsEndpoints.ALBUM, id);
-
-    return album;
+    return this.db.album.delete({
+      where: {
+        id
+      }
+    })
+    /*     const album = this.db.albumDB.findbyID(id);
+        if (!album) return null;
+        this.db.albumDB.deleteOne(id);
+        this.db.trackDB.getAll().forEach((tr) => {
+          if (tr.albumId === id) tr.albumId = null;
+        });
+    
+        const favAlbum = await this.favsService.findOne(favsEndpoints.ALBUM, id);
+        if (favAlbum)
+          await this.favsService.deleteFromFavs(favsEndpoints.ALBUM, id);
+    
+        return album; */
   }
 }
