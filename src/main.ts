@@ -15,8 +15,7 @@ async function bootstrap() {
       validatorUrl: null,
     },
   });
-  const port = process.env.PORT || 4000
 
-  await app.listen(port, () => console.log(`server started on port ${port}`));
+  await app.listen(process.env.PORT || 4000, () => console.log(`App started on port ${process.env.APP_PORT}`));
 }
 bootstrap();
