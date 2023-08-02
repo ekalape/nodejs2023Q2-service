@@ -15,9 +15,9 @@ export class FavsService {
   constructor(
     private readonly favsDB: FAVSDB,
     private readonly db: DatabaseService,
-  ) { }
+  ) {}
   async findAll() {
-    console.log("first")
+    console.log('first');
     return {
       artists: this.favsDB.getFavArtist(),
       albums: this.favsDB.getFavAlbums(),

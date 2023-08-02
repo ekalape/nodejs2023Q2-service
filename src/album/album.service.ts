@@ -1,69 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { Album } from './entities/album.entity';
-import { FavsService } from 'src/favs/favs.service';
+
 import { DatabaseService } from 'src/database/database.service';
-import { favsEndpoints } from 'src/utils/favsEndpoints';
 
 @Injectable()
 export class AlbumService {
-  constructor(
-    private readonly favsService: FavsService,
-    private readonly db: DatabaseService,
-  ) { }
+  constructor(private readonly db: DatabaseService) {}
   async create(createAlbumDto: CreateAlbumDto) {
-    return this.db.album.create({ data: createAlbumDto })
-    /*     const album = new Album(createAlbumDto);
-        this.db.albumDB.addOne(album);
-        return album; */
+    return await this.db.album.create({ data: createAlbumDto });
   }
 
   async findAll() {
-    return this.db.album.findMany()
-    /*  return this.db.albumDB.getAll(); */
+    return await this.db.album.findMany();
   }
 
   async findOne(id: string) {
-    return this.db.album.findUnique({
+    return await this.db.album.findUnique({
       where: {
-        id
-      }
-    })
-    /*     const album = this.db.albumDB.findbyID(id);
-        if (!album) return null;
-        return this.db.albumDB.findbyID(id); */
+        id,
+      },
+    });
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    return this.db.album.update({
+    return await this.db.album.update({
       where: {
-        id
+        id,
       },
-      data: updateAlbumDto
-    })
-    /*     const album = this.db.albumDB.findbyID(id);
-        if (!album) return null;
-        return album.update(updateAlbumDto); */
+      data: updateAlbumDto,
+    });
   }
 
   async remove(id: string) {
-    return this.db.album.delete({
+    return await this.db.album.delete({
       where: {
-        id
-      }
-    })
-    /*     const album = this.db.albumDB.findbyID(id);
-        if (!album) return null;
-        this.db.albumDB.deleteOne(id);
-        this.db.trackDB.getAll().forEach((tr) => {
-          if (tr.albumId === id) tr.albumId = null;
-        });
-    
-        const favAlbum = await this.favsService.findOne(favsEndpoints.ALBUM, id);
-        if (favAlbum)
-          await this.favsService.deleteFromFavs(favsEndpoints.ALBUM, id);
-    
-        return album; */
+        id,
+      },
+    });
   }
 }

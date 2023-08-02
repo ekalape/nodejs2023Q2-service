@@ -1,95 +1,72 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DatabaseService } from 'src/database/database.service';
+import { excludeField } from 'src/utils/excludeFields';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) { }
+  constructor(private readonly db: DatabaseService) {}
   async create(createUserDto: CreateUserDto) {
-
-    const user = this.db.user.create({
-      data: createUserDto, select: {
-        id: true,
-        login: true
-      }
-    })
-    return user;
-
-    /*     const { login, password } = createUserDto;
-        const existentUser = this.db.usersDB
-          .getAll()
-          .find((x) => x.login === login);
-        if (existentUser) throw new BadRequestException('User already exists');
-        const newUser = new User(login, password);
-        this.db.usersDB.addOne(newUser);
-        return newUser.info(); */
+    const user = await this.db.user.create({
+      data: createUserDto,
+    });
+    const crAt = user.createdAt.getTime();
+    const upAt = user.updatedAt.getTime();
+    const mappedUser: User = { ...user, createdAt: crAt, updatedAt: upAt };
+    return excludeField(mappedUser, ['password']);
   }
 
   async findAll() {
-    return this.db.user.findMany({
-      select: {
-        id: true,
-        login: true
-      }
-    })
-    /*     const allusers = this.db.usersDB.getAll().map((x) => x.info());
-        return allusers; */
+    return await this.db.user.findMany({ select: { id: true, login: true } });
   }
 
   async findOne(id: string) {
-    return this.db.user.findUnique({
+    const user = await this.db.user.findUnique({
       where: {
-        id
+        id,
       },
-      select: {
-        id: true,
-        login: true
-      }
-    })
-    /*     const user = this.db.usersDB.findbyID(id);
-        if (!user) return null;
-        return user.info(); */
+    });
+    if (!user) return null;
+    return excludeField(user, ['password']);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.db.user.update({
+    const { oldPassword, newPassword } = updateUserDto;
+    const user = await this.db.user.findUnique({
+      where: { id },
+    });
+    if (!user) return null;
+    if (user.password !== oldPassword) throw new ForbiddenException();
+    const version = user.version + 1;
+    const updatedUser = await this.db.user.update({
       where: {
-        id
+        id,
       },
-      data: updateUserDto,
-      select: {
-        id: true,
-        login: true
-      }
-    })
-    /*     const { oldPassword, newPassword } = updateUserDto;
-        const user = this.db.usersDB.findbyID(id);
-        if (!user) return null;
-        if (user.password !== oldPassword) throw new ForbiddenException();
-        user.changePassword(newPassword);
-        return user.info(); */
+      data: { password: newPassword, version },
+    });
+    const crAt = updatedUser.createdAt.getTime();
+    const upAt = updatedUser.updatedAt.getTime();
+    const mappedUser: User = {
+      ...updatedUser,
+      createdAt: crAt,
+      updatedAt: upAt,
+    };
+    return excludeField(mappedUser, ['password']);
   }
 
   async remove(id: string) {
-    return this.db.user.delete({
+    const user = await this.db.user.findUnique({
       where: {
-        id
+        id,
       },
-      select: {
-        id: true,
-        login: true
-      }
-    })
-    /*     const user = this.db.usersDB.findbyID(id);
-        if (!user) return null;
-        this.db.usersDB.deleteOne(id);
-        return user.info();
-      } */
+    });
+    if (!user) return null;
+    return await this.db.user.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
