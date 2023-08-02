@@ -7,7 +7,7 @@ WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
-COPY prisma ./prisma/
+#COPY prisma ./prisma/
 
 
 RUN npm install && npm cache clean --force
@@ -25,4 +25,4 @@ EXPOSE ${PORT}
 RUN npm run build
 
 #CMD [ "node", "dist/main.js" ]
-CMD [ "npm", "run", "start:migrate-watch" ]
+#CMD [ "npm", "run", "start:migrate-watch" ]

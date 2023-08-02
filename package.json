@@ -24,7 +24,7 @@
     "dock:run": "docker run -dp 127.0.0.1:4100:4000 --name lib-service-container cat/library-service-app",
     "dock:test": "docker exec -it lib-service-container npm run test",
     "dock:stop": "docker compose down",
-    "dock:start": "docker compose up"
+    "dock:start": "docker compose up --build"
   },
   "dependencies": {
     "@nestjs/cli": "^10.1.10",

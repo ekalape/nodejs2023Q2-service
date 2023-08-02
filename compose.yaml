@@ -7,10 +7,10 @@ services:
       context: .
     depends_on:
       - postgres
+    restart: always
     volumes:
-      - type: bind
-        source: ./src
-        target: /app/src
+        - ./src:/app/src
+        - node_modules:/app/node_modules
     command: npm run start:migrate-watch
     environment:
        DATABASE_URL: ${DATABASE_URL}
@@ -23,7 +23,7 @@ services:
       - lib-service-network
 
   postgres:
-    container_name: pg-db-container
+    container_name: ${DB_NAME}
     #build:
       #dockerfile: Dockerfile
       #context: ./prisma/db
@@ -45,12 +45,15 @@ services:
         target: /var/lib/postgresql/data
     networks:
       - lib-service-network
+    
 
 networks:
   lib-service-network:
-
+    name: lib-service-network
+    driver: bridge
 
 volumes:
   pgdata:
+  node_modules:
 
 
