@@ -1,30 +1,21 @@
 FROM node:lts-alpine
 
-# Create app directory
+#RUN apk add --no-cache postgresql-client
+
 WORKDIR /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
 COPY package*.json ./
-#COPY prisma ./prisma/
-
+COPY prisma ./prisma
 
 RUN npm install && npm cache clean --force
-#RUN npx prisma generate
 
-# If you are building your code for production
-#RUN npm ci --omit=dev
+RUN npx prisma generate
 
-# Bundle app source
 COPY . .
 
 EXPOSE ${PORT}
 
-RUN npx prisma generate
-
 RUN npm run build
-
 
 
 #CMD [ "node", "dist/main.js" ]

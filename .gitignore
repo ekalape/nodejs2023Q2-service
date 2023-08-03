@@ -3,7 +3,7 @@
 /node_modules
 /customHttpCheck
 /pgdata
-prisma/migrations
+
 
 # Logs
 logs
@@ -38,4 +38,3 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .env
-.dockerignore

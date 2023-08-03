@@ -18,7 +18,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(private readonly albumService: AlbumService) { }
 
   @UsePipes(new ValidationPipe())
   @Post()
@@ -58,7 +58,7 @@ export class AlbumController {
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    let album;
+    let album = null;
     try {
       album = await this.albumService.remove(id);
     } catch (err) {

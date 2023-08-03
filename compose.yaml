@@ -13,7 +13,7 @@ services:
         - node_modules:/app/node_modules
     command: npm run start:migrate-watch
     environment:
-       DATABASE_URL: ${DATABASE_URL}
+       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_NAME}:5432/${DB_NAME}?schema=public"
        NODE_ENV: development
        PORT: "${PORT}"
        POSTGRES_SYNC: true
@@ -24,21 +24,18 @@ services:
 
   postgres:
     container_name: ${DB_NAME}
-    #build:
-      #dockerfile: Dockerfile
-      #context: ./prisma/db
     image: postgres:15.3-alpine3.17
     restart: always
     expose:
       - ${DB_PORT}
-
     ports:
       - ${DB_PORT}:${DB_PORT}
-
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "${DB_PORT}"
     volumes:
       - type: volume
         source: pgdata
