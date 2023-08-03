@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class DatabaseService extends PrismaClient {
-
   constructor() {
     super();
   }
@@ -16,5 +15,4 @@ export class DatabaseService extends PrismaClient {
   async onModuleDestroy() {
     await this.$disconnect;
   }
-
 }

@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   ParseEnumPipe,
   HttpCode,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
 import { favsEndpoints } from 'src/utils/favsEndpoints';
@@ -25,7 +26,9 @@ export class FavsController {
     @Param('subpoint', new ParseEnumPipe(favsEndpoints)) subpoint: string,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return await this.favsService.addToFavs(subpoint, id);
+    const fav = await this.favsService.addToFavs(subpoint, id);
+    if (!fav) throw new UnprocessableEntityException();
+    return fav;
   }
 
   @HttpCode(204)
@@ -35,6 +38,6 @@ export class FavsController {
     subpoint: favsEndpoints,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return await this.favsService.deleteFromFavs(subpoint, id);
+    await this.favsService.deleteFromFavs(subpoint, id);
   }
 }
