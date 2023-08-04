@@ -3,23 +3,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DatabaseService } from 'src/database/database.service';
-import { excludeField } from 'src/utils/excludeFields';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
   async create(createUserDto: CreateUserDto) {
-    const user = await this.db.user.create({
+    const user = new User(await this.db.user.create({
       data: createUserDto,
-    });
-    const crAt = user.createdAt.getTime();
-    const upAt = user.updatedAt.getTime();
-    const mappedUser: User = { ...user, createdAt: crAt, updatedAt: upAt };
-    return excludeField(mappedUser, ['password']);
+    }));
+    return user;
   }
 
   async findAll() {
-    return await this.db.user.findMany({ select: { id: true, login: true } });
+    const resp = await this.db.user.findMany();
+    const users = resp.map(u => new User(u))
+    return users;
   }
 
   async findOne(id: string) {
@@ -29,7 +27,8 @@ export class UsersService {
       },
     });
     if (!user) return null;
-    return excludeField(user, ['password']);
+
+    return new User(user);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -46,14 +45,8 @@ export class UsersService {
       },
       data: { password: newPassword, version },
     });
-    const crAt = updatedUser.createdAt.getTime();
-    const upAt = updatedUser.updatedAt.getTime();
-    const mappedUser: User = {
-      ...updatedUser,
-      createdAt: crAt,
-      updatedAt: upAt,
-    };
-    return excludeField(mappedUser, ['password']);
+
+    return new User(updatedUser);
   }
 
   async remove(id: string) {

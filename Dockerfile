@@ -1,6 +1,5 @@
-FROM node:lts-alpine
+FROM node:20-alpine
 
-#RUN apk add --no-cache postgresql-client
 
 WORKDIR /app
 
@@ -17,6 +16,3 @@ EXPOSE ${PORT}
 
 RUN npm run build
 
-
-#CMD [ "node", "dist/main.js" ]
-#CMD [ "npm", "run", "start:migrate-watch" ]
