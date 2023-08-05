@@ -5,6 +5,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    image: lib-service-library
     depends_on:
       - postgres
     restart: always
@@ -52,8 +53,13 @@ networks:
     driver: bridge
 
 volumes:
+  app:   
+     name: app 
   pgdata:
+     name: pgata
   node_modules:
+     name: node_modules
   logs:
+     name: pglogs
 
 
