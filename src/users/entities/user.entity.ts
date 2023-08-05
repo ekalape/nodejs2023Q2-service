@@ -15,9 +15,12 @@ export class User {
   updatedAt: Date | number;
 
   constructor(data: {
-    id: string, login: string, password: string, version: number,
-    createdAt: Date,
-    updatedAt: Date
+    id: string;
+    login: string;
+    password: string;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
   }) {
     this.id = data.id;
     this.login = data.login;

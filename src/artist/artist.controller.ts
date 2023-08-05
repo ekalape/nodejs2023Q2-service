@@ -62,7 +62,7 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    let artist;
+    let artist = null;
     try {
       artist = await this.artistService.remove(id);
     } catch (err) {

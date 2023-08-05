@@ -6,17 +6,19 @@ import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) { }
+  constructor(private readonly db: DatabaseService) {}
   async create(createUserDto: CreateUserDto) {
-    const user = new User(await this.db.user.create({
-      data: createUserDto,
-    }));
+    const user = new User(
+      await this.db.user.create({
+        data: createUserDto,
+      }),
+    );
     return user;
   }
 
   async findAll() {
     const resp = await this.db.user.findMany();
-    const users = resp.map(u => new User(u))
+    const users = resp.map((u) => new User(u));
     return users;
   }
 

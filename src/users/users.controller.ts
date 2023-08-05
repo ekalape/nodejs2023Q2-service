@@ -22,7 +22,7 @@ import { User } from './entities/user.entity';
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @UsePipes(new ValidationPipe())
   @Post()
@@ -34,7 +34,7 @@ export class UsersController {
   @Get()
   async findAll() {
     const users: User[] = await this.usersService.findAll();
-    return users
+    return users;
   }
 
   @Get(':id')

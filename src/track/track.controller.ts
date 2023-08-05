@@ -43,7 +43,7 @@ export class TrackController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    let track;
+    let track = null;
     try {
       track = await this.trackService.update(id, updateTrackDto);
     } catch (err) {
