@@ -15,9 +15,9 @@ services:
         
     command: npm run start:migrate-watch
     environment:
-       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_NAME}:5432/${DB_NAME}?schema=public"
-       NODE_ENV: development
-       PORT: "${PORT}"
+       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_NAME}:${DB_PORT}/${DB_NAME}?schema=public"
+       NODE_ENV: ${ENV_MODE}
+       PORT: ${PORT}
        POSTGRES_SYNC: true
     ports:
       - "${APP_PORT}:${PORT}"
@@ -26,7 +26,10 @@ services:
 
   postgres:
     container_name: ${DB_NAME}
-    image: postgres:15.3-alpine3.17
+    build:
+      dockerfile: dockerfile.postgres
+      context: .
+    image: postgres
     restart: always
     expose:
       - ${DB_PORT}
