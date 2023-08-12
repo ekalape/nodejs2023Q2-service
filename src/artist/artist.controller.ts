@@ -11,10 +11,12 @@ import {
   Put,
   HttpCode,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 @Controller('artist')
 export class ArtistController {
@@ -43,16 +45,30 @@ export class ArtistController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const artist = await this.artistService.update(id, updateArtistDto);
-    if (!artist) throw new NotFoundException();
+    let artist;
+    try {
+      artist = await this.artistService.update(id, updateArtistDto);
+    } catch (err) {
+      if (err instanceof PrismaClientValidationError)
+        throw new BadRequestException();
+      else {
+        throw new NotFoundException();
+      }
+    }
+
     return artist;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    const artist = await this.artistService.remove(id);
-    if (!artist) throw new NotFoundException();
+    let artist = null;
+    try {
+      artist = await this.artistService.remove(id);
+    } catch (err) {
+      if (err instanceof Error) throw new NotFoundException();
+      else throw err;
+    }
     return artist;
   }
 }

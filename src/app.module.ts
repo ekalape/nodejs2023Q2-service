@@ -17,7 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     TrackModule,
     AlbumModule,
     FavsModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService],

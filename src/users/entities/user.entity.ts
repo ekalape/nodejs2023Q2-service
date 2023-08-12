@@ -1,36 +1,32 @@
-import { v4 as uuid } from 'uuid';
+import { Exclude, Transform } from 'class-transformer';
+
 export class User {
   id: string;
   login: string;
+
+  @Exclude()
   password: string;
   version: number;
-  createdAt: number;
-  updatedAt: number;
 
-  constructor(login: string, password: string) {
-    this.login = login;
-    this.password = password;
-    this.id = uuid();
-    this.version = 1;
-    this.createdAt = Date.now();
-    this.updatedAt = this.createdAt;
-  }
+  @Transform(({ value }) => value.getTime())
+  createdAt: Date | number;
 
-  info() {
-    /*     const createdDate = new Date(this.createdAt).toLocaleString();
-            const updatedDate = new Date(this.updatedAt).toLocaleString(); */
-    return {
-      id: this.id,
-      login: this.login,
-      version: this.version,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
-  }
-  changePassword(pass: string) {
-    this.password = pass;
-    this.version += 1;
-    this.updatedAt = Date.now();
-    console.log('Done');
+  @Transform(({ value }) => value.getTime())
+  updatedAt: Date | number;
+
+  constructor(data: {
+    id: string;
+    login: string;
+    password: string;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }) {
+    this.id = data.id;
+    this.login = data.login;
+    this.password = data.password;
+    this.version = data.version;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
   }
 }

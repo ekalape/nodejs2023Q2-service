@@ -1,81 +1,87 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-
-import { FAVSDB } from 'src/database/favsDB';
 import { favsEndpoints } from 'src/utils/favsEndpoints';
 
 @Injectable()
 export class FavsService {
-  constructor(
-    private readonly favsDB: FAVSDB,
-    private readonly db: DatabaseService,
-  ) {}
+  constructor(private readonly db: DatabaseService) {}
   async findAll() {
+    const artistsIds = (await this.db.favsArtist.findMany()).map(
+      (x) => x.artistID,
+    );
+    const albumsIds = (await this.db.favsAlbum.findMany()).map(
+      (x) => x.albumID,
+    );
+    const tracksIds = (await this.db.favsTrack.findMany()).map(
+      (x) => x.trackID,
+    );
+
+    const artists = await this.db.artist.findMany({
+      where: {
+        id: { in: artistsIds },
+      },
+    });
+    const albums = await this.db.album.findMany({
+      where: {
+        id: {
+          in: albumsIds,
+        },
+      },
+    });
+    const tracks = await this.db.track.findMany({
+      where: {
+        id: {
+          in: tracksIds,
+        },
+      },
+    });
     return {
-      artists: this.favsDB.getFavArtist(),
-      albums: this.favsDB.getFavAlbums(),
-      tracks: this.favsDB.getFavTracks(),
+      artists,
+      albums,
+      tracks,
     };
   }
 
-  async findOne(type: favsEndpoints, id: string) {
-    let result = null;
-    if (type === favsEndpoints.ARTIST) result = this.favsDB.findArtist(id);
-    if (type === favsEndpoints.ALBUM) result = this.favsDB.findAlbum(id);
-    if (type === favsEndpoints.TRACK) result = this.favsDB.findTrack(id);
-    return result;
-  }
-
   async addToFavs(subpoint: string, id: string) {
+    const entity = await this.db[subpoint].findUnique({
+      where: { id },
+    });
+    if (!entity) return null;
     if (subpoint === favsEndpoints.ARTIST) {
-      const artist = this.db.artistDB.findbyID(id);
-      if (!artist) throw new UnprocessableEntityException();
-      const existent = this.favsDB.findArtist(id);
-      if (existent)
-        throw new NotAcceptableException(
-          `This ${subpoint} is already added to the database`,
-        );
-      this.favsDB.addArtist(artist);
-      return artist;
+      await this.db.favsArtist.create({
+        data: { artistID: id },
+      });
     } else if (subpoint === favsEndpoints.ALBUM) {
-      const album = this.db.albumDB.findbyID(id);
-      if (!album) throw new UnprocessableEntityException();
-      const existent = this.favsDB.findAlbum(id);
-      if (existent)
-        throw new NotAcceptableException(
-          `This ${subpoint} is already added to the database`,
-        );
-      this.favsDB.addAlbum(album);
-      return album;
+      await this.db.favsAlbum.create({
+        data: { albumID: id },
+      });
     } else if (subpoint === favsEndpoints.TRACK) {
-      const track = this.db.trackDB.findbyID(id);
-      if (!track) throw new UnprocessableEntityException();
-      const existent = this.favsDB.findTrack(id);
-      if (existent)
-        throw new NotAcceptableException(
-          `This ${subpoint} is already added to the database`,
-        );
-      this.favsDB.addTrack(track);
-      return track;
-    } else throw new BadRequestException();
+      await this.db.favsTrack.create({
+        data: { trackID: id },
+      });
+    }
+    return entity;
   }
 
-  async deleteFromFavs(subpoint: favsEndpoints, id: string) {
+  async deleteFromFavs(subpoint: string, id: string) {
     if (subpoint === favsEndpoints.ARTIST) {
-      const deleted = this.favsDB.deleteArtist(id);
-      if (!deleted) throw new NotFoundException();
+      await this.db.favsArtist.delete({
+        where: {
+          artistID: id,
+        },
+      });
     } else if (subpoint === favsEndpoints.ALBUM) {
-      const deleted = this.favsDB.deleteAlbum(id);
-      if (!deleted) throw new NotFoundException();
+      await this.db.favsAlbum.delete({
+        where: {
+          albumID: id,
+        },
+      });
     } else if (subpoint === favsEndpoints.TRACK) {
-      const deleted = this.favsDB.deleteTrack(id);
-      if (!deleted) throw new NotFoundException();
-    } else throw new BadRequestException();
+      await this.db.favsTrack.delete({
+        where: {
+          trackID: id,
+        },
+      });
+    } else throw new NotFoundException();
   }
 }

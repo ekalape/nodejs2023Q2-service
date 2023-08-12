@@ -1,0 +1,68 @@
+
+services:
+  app:
+    container_name: lib-service-container
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: lib-service-library
+    depends_on:
+      - postgres
+    restart: always
+    volumes:
+        - ./src:/app/src
+        - node_modules:/app/node_modules
+        
+    command: npm run start:migrate-watch
+    environment:
+       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_NAME}:${DB_PORT}/${DB_NAME}?schema=public"
+       NODE_ENV: ${ENV_MODE}
+       PORT: ${PORT}
+       POSTGRES_SYNC: true
+    ports:
+      - "${APP_PORT}:${PORT}"
+    networks:
+      - lib-service-network
+
+  postgres:
+    container_name: ${DB_NAME}
+    build:
+      dockerfile: dockerfile.postgres
+      context: .
+    image: postgres
+    restart: always
+    expose:
+      - ${DB_PORT}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "${DB_PORT}"
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data
+      - logs:/var/log/postgresql
+    networks:
+      - lib-service-network
+    
+
+networks:
+  lib-service-network:
+    name: lib-service-network
+    driver: bridge
+
+volumes:
+  app:   
+     name: app 
+  pgdata:
+     name: pgata
+  node_modules:
+     name: node_modules
+  logs:
+     name: pglogs
+
+

@@ -2,6 +2,8 @@
 /dist
 /node_modules
 /customHttpCheck
+/pgdata
+
 
 # Logs
 logs
@@ -36,4 +38,3 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .env
-.dockerignore

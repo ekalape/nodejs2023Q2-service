@@ -11,24 +11,30 @@ import {
   ParseUUIDPipe,
   HttpCode,
   NotFoundException,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UsePipes(new ValidationPipe())
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+    const user = await this.usersService.create(createUserDto);
+    return user;
   }
 
   @Get()
   async findAll() {
-    return await this.usersService.findAll();
+    const users: User[] = await this.usersService.findAll();
+    return users;
   }
 
   @Get(':id')
