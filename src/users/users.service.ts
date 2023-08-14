@@ -3,16 +3,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DatabaseService } from 'src/database/database.service';
+import { passwordEncryption } from 'src/utils/cryptoPassword';
+import { compare } from 'bcrypt'
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
   async create(createUserDto: CreateUserDto) {
+    const cryptedPass = await passwordEncryption(createUserDto.password)
+    console.log(cryptedPass)
     const user = new User(
       await this.db.user.create({
-        data: createUserDto,
+        data: { ...createUserDto, password: cryptedPass },
       }),
     );
+    console.log("created ---> ", user)
     return user;
   }
 
@@ -39,15 +44,18 @@ export class UsersService {
       where: { id },
     });
     if (!user) return null;
-    if (user.password !== oldPassword) throw new ForbiddenException();
+
+    const isRightPass = await compare(oldPassword, user.password)
+    if (!isRightPass) throw new ForbiddenException();
+    const newCryptedPass = await passwordEncryption(newPassword)
     const version = user.version + 1;
     const updatedUser = await this.db.user.update({
       where: {
         id,
       },
-      data: { password: newPassword, version },
+      data: { password: newCryptedPass, version },
     });
-
+    console.log("updated ---> ", updatedUser)
     return new User(updatedUser);
   }
 
