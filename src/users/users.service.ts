@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DatabaseService } from 'src/database/database.service';
-import { passwordEncryption } from 'src/utils/cryptoPassword';
+import { passwordEncryption } from 'src/utils/passwordEncryption';
 import { compare } from 'bcrypt'
 
 @Injectable()
@@ -72,4 +72,14 @@ export class UsersService {
       },
     });
   }
+
+  async findByName(login: string) {
+    return await this.db.user.findFirst({
+      where: {
+        login
+      }
+    })
+  }
+
+
 }

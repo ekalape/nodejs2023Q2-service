@@ -25,7 +25,8 @@
     "dock:test": "docker exec -it lib-service-container npm run test",
     "dock:stop": "docker compose down",
     "dock:start": "docker compose up --build",
-    "dock:scan": "docker scout cves lib-service-library"
+    "dock:scan": "docker scout cves lib-service-library",
+    "dock:prisma-reset": "docker exec -it lib-service-container npx prisma migrate reset"
   },
   "dependencies": {
     "@nestjs/cli": "^10.1.10",

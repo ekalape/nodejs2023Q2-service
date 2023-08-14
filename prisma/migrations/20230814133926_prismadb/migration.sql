@@ -56,6 +56,9 @@ CREATE TABLE "FavsTrack" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_login_key" ON "User"("login");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "FavsArtist_artistID_key" ON "FavsArtist"("artistID");
 
 -- CreateIndex
