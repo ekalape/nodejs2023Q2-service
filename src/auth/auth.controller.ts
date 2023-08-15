@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, HttpCode, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Param, HttpCode, BadRequestException, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { SignUpAuthDto } from './dto/signup-auth.dto';
@@ -6,13 +6,14 @@ import { Public } from '@prisma/client/runtime/library';
 
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
 
   @Post('signup')
   signUp(@Body() signUpAuthDto: SignUpAuthDto) {
-    // return this.authService.signUp(createAuthDto);
+    return this.authService.signUp(signUpAuthDto);
   }
 
 

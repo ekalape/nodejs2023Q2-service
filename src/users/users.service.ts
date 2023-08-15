@@ -12,13 +12,12 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const cryptedPass = await passwordEncryption(createUserDto.password)
     console.log(cryptedPass)
-    const user = new User(
-      await this.db.user.create({
-        data: { ...createUserDto, password: cryptedPass },
-      }),
-    );
+    const user = await this.db.user.create({
+      data: { ...createUserDto, password: cryptedPass },
+    })
+
     console.log("created ---> ", user)
-    return user;
+    return new User(user);
   }
 
   async findAll() {
