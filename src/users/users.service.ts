@@ -4,19 +4,19 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DatabaseService } from 'src/database/database.service';
 import { passwordEncryption } from 'src/utils/passwordEncryption';
-import { compare } from 'bcrypt'
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) { }
+  constructor(private readonly db: DatabaseService) {}
   async create(createUserDto: CreateUserDto) {
-    const cryptedPass = await passwordEncryption(createUserDto.password)
-    console.log(cryptedPass)
+    const cryptedPass = await passwordEncryption(createUserDto.password);
+    console.log(cryptedPass);
     const user = await this.db.user.create({
       data: { ...createUserDto, password: cryptedPass },
-    })
+    });
 
-    console.log("created ---> ", user)
+    console.log('created ---> ', user);
     return new User(user);
   }
 
@@ -44,9 +44,9 @@ export class UsersService {
     });
     if (!user) return null;
 
-    const isRightPass = await compare(oldPassword, user.password)
+    const isRightPass = await compare(oldPassword, user.password);
     if (!isRightPass) throw new ForbiddenException();
-    const newCryptedPass = await passwordEncryption(newPassword)
+    const newCryptedPass = await passwordEncryption(newPassword);
     const version = user.version + 1;
     const updatedUser = await this.db.user.update({
       where: {
@@ -54,7 +54,7 @@ export class UsersService {
       },
       data: { password: newCryptedPass, version },
     });
-    console.log("updated ---> ", updatedUser)
+    console.log('updated ---> ', updatedUser);
     return new User(updatedUser);
   }
 
@@ -75,10 +75,8 @@ export class UsersService {
   async findByName(login: string) {
     return await this.db.user.findFirst({
       where: {
-        login
-      }
-    })
+        login,
+      },
+    });
   }
-
-
 }

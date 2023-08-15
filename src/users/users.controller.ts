@@ -20,7 +20,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Prisma } from '@prisma/client';
-import { Public } from 'src/auth/publicDecorator';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -34,9 +33,12 @@ export class UsersController {
       const user = await this.usersService.create(createUserDto);
       return user;
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-        throw new BadRequestException("This login already exists")
-      } else throw err
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new BadRequestException('This login already exists');
+      } else throw err;
     }
   }
 

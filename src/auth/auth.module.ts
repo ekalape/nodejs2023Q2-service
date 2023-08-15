@@ -7,18 +7,22 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './authGuard';
 
 @Module({
-  imports: [UsersModule,
+  imports: [
+    UsersModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: process.env.TOKEN_EXPIRE_TIME },
-    }),],
+    }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService,
+  providers: [
+    AuthService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    },],
-  exports: [AuthService]
+    },
+  ],
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}
