@@ -27,7 +27,6 @@ export class AuthService {
     const accessToken = await this.getAccessToken(user.id, login)
     const refreshToken = await this.getRefreshToken(user.id, login)
 
-    console.log("accesToken===> ", accessToken)
     return { accessToken, refreshToken };
   }
 
@@ -37,11 +36,11 @@ export class AuthService {
 
   private async getAccessToken(id: string, login: string) {
     const accessToken = await this.jwtService.signAsync({ id, login })
-    return "Bearer " + accessToken
+    return accessToken
   }
   private async getRefreshToken(id: string, login: string) {
-    const refreshToken = await this.jwtService.signAsync({ id, login }, { expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME })
-    return "Bearer " + refreshToken
+    const refreshToken = await this.jwtService.signAsync({ id, login, secret: process.env.JWT_SECRET_REFRESH_KEY }, { expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME })
+    return refreshToken
   }
 
 

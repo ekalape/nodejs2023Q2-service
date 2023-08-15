@@ -20,6 +20,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Prisma } from '@prisma/client';
+import { Public } from 'src/auth/publicDecorator';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
