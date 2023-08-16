@@ -24,7 +24,7 @@ import { Prisma } from '@prisma/client';
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @UsePipes(new ValidationPipe())
   @Post()

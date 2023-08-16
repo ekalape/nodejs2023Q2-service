@@ -11,12 +11,9 @@ export class UsersService {
   constructor(private readonly db: DatabaseService) {}
   async create(createUserDto: CreateUserDto) {
     const cryptedPass = await passwordEncryption(createUserDto.password);
-    console.log(cryptedPass);
     const user = await this.db.user.create({
       data: { ...createUserDto, password: cryptedPass },
     });
-
-    console.log('created ---> ', user);
     return new User(user);
   }
 
@@ -54,7 +51,6 @@ export class UsersService {
       },
       data: { password: newCryptedPass, version },
     });
-    console.log('updated ---> ', updatedUser);
     return new User(updatedUser);
   }
 

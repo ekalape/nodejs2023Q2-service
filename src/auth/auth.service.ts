@@ -31,17 +31,21 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
-    const data: DecodedToken = this.jwtService.decode(
-      refreshToken,
-    ) as DecodedToken;
-    if (!data.id || !data.exp || !data.login) throw new ForbiddenException();
-    const validRefreshToken = data.exp - Date.now() / 1000;
-    if (validRefreshToken < 0) throw new ForbiddenException();
+    try {
+      const validRft = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+      const { id, login, exp } = validRft;
+      const validRefreshToken = exp - Date.now() / 1000;
+      if (validRefreshToken < 0) throw new ForbiddenException();
 
-    const accessToken = await this.getAccessToken(data.id, data.login);
-    const newRefreshToken = await this.getRefreshToken(data.id, data.login);
+      const accessToken = await this.getAccessToken(id, login);
+      const newRefreshToken = await this.getRefreshToken(id, login);
 
-    return { accessToken, newRefreshToken };
+      return { accessToken, newRefreshToken };
+    } catch (err) {
+      throw new ForbiddenException('Invalid refresh token');
+    }
   }
 
   private async getAccessToken(id: string, login: string) {
@@ -50,17 +54,12 @@ export class AuthService {
   }
   private async getRefreshToken(id: string, login: string) {
     const refreshToken = await this.jwtService.signAsync(
-      { id, login, secret: process.env.JWT_SECRET_REFRESH_KEY },
-      { expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME },
+      { id, login },
+      {
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      },
     );
     return refreshToken;
   }
-}
-
-interface DecodedToken {
-  id: string;
-  login: string;
-  secret: string;
-  iat: number;
-  exp: number;
 }
