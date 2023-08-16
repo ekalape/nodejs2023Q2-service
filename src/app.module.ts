@@ -9,6 +9,7 @@ import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { CustomLoggerService } from './customLogger/customlogger.service';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CustomLoggerService],
   exports: [],
 })
-export class AppModule {}
+export class AppModule { }

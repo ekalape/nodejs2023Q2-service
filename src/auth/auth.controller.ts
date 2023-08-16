@@ -11,12 +11,12 @@ import {
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { SignUpAuthDto } from './dto/signup-auth.dto';
-import { Public } from './publicDecorator';
+import { Public, Refresh } from './publicDecorator';
 import { RefreshDto } from './dto/refresh.dto';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('signup')
   @Public()
@@ -33,8 +33,10 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Refresh()
   @HttpCode(200)
   async refresh(@Body() refreshDto: RefreshDto) {
+    console.log("controller-refresh")
     const { refreshToken } = refreshDto;
     if (!refreshToken) throw new UnauthorizedException();
 
