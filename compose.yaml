@@ -10,7 +10,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./src:/app/src
-      - node_modules:/app/node_modules
+      - node_modules:/app/node_modules  
+      - logsDir:/app/logsDir/
 
     command: npm run start:migrate-watch
     environment:
@@ -44,7 +45,7 @@ services:
       - type: volume
         source: pgdata
         target: /var/lib/postgresql/data
-      - logs:/var/log/postgresql
+      
     networks:
       - lib-service-network
 
@@ -60,5 +61,13 @@ volumes:
     name: pgata
   node_modules:
     name: node_modules
-  logs:
-    name: pglogs
+  logsDir:
+    name: logsDir
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./logsDir
+    
+
+
