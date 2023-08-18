@@ -22,7 +22,7 @@ import { LoggerMiddleware } from './customLogger/custom-logger.middleware';
     FavsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
-    CustomLoggerModule
+    CustomLoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
