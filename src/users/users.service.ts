@@ -8,7 +8,9 @@ import { compare } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) {
+
+  }
   async create(createUserDto: CreateUserDto) {
     const cryptedPass = await passwordEncryption(createUserDto.password);
     const user = await this.db.user.create({

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -9,7 +9,8 @@ import { AlbumModule } from './album/album.module';
 import { FavsModule } from './favs/favs.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { CustomLoggerService } from './customLogger/customlogger.service';
+import { CustomLoggerModule } from './customLogger/custom-logger.module';
+import { LoggerMiddleware } from './customLogger/custom-logger.middleware';
 
 @Module({
   imports: [
@@ -21,9 +22,14 @@ import { CustomLoggerService } from './customLogger/customlogger.service';
     FavsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
+    CustomLoggerModule
   ],
   controllers: [AppController],
-  providers: [AppService, CustomLoggerService],
+  providers: [AppService],
   exports: [],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

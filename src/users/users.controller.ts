@@ -14,17 +14,24 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   BadRequestException,
+
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Prisma } from '@prisma/client';
+import { CustomLoggerService } from 'src/customLogger/custom-logger.service';
+import { Public } from 'src/auth/publicDecorator';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+
+
+  constructor(private readonly usersService: UsersService, private readonly logger: CustomLoggerService) {
+    this.logger.setContext("Users")
+  }
 
   @UsePipes(new ValidationPipe())
   @Post()
@@ -37,13 +44,16 @@ export class UsersController {
         err instanceof Prisma.PrismaClientKnownRequestError &&
         err.code === 'P2002'
       ) {
+
         throw new BadRequestException('This login already exists');
       } else throw err;
     }
   }
 
+  @Public()
   @Get()
   async findAll() {
+    this.logger.log("Inside getAll")
     const users: User[] = await this.usersService.findAll();
     return users;
   }
@@ -51,7 +61,10 @@ export class UsersController {
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.usersService.findOne(id);
-    if (!user) throw new NotFoundException();
+    if (!user) {
+      this.logger.error("The user is not found")
+      throw new NotFoundException();
+    }
     return user;
   }
 
