@@ -13,14 +13,14 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import { SignUpAuthDto } from './dto/signup-auth.dto';
 import { Public, Refresh } from './publicDecorator';
 import { RefreshDto } from './dto/refresh.dto';
-import { CustomLoggerService } from 'src/customLogger/custom-logger.service';
+/* import { CustomLoggerService } from 'src/customLogger/custom-logger.service'; */
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly logger: CustomLoggerService,
-  ) {}
+    /*     private readonly logger: CustomLoggerService, */
+  ) { }
 
   @Post('signup')
   @Public()
@@ -33,7 +33,7 @@ export class AuthController {
   async logIn(@Body() loginAuthDto: LoginAuthDto) {
     const { login, password } = loginAuthDto;
     if (!login || !password) {
-      this.logger.error('No login or password found');
+      /*       this.logger.error('No login or password found'); */
       throw new BadRequestException();
     }
     return await this.authService.logIn(login, password);
@@ -45,7 +45,7 @@ export class AuthController {
   async refresh(@Body() refreshDto: RefreshDto) {
     const { refreshToken } = refreshDto;
     if (!refreshToken) {
-      this.logger.error('No refresh token found');
+      /*       this.logger.error('No refresh token found'); */
       throw new UnauthorizedException();
     }
     return this.authService.refresh(refreshToken);

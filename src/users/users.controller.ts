@@ -21,16 +21,15 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Prisma } from '@prisma/client';
 import { CustomLoggerService } from 'src/customLogger/custom-logger.service';
-import { Public } from 'src/auth/publicDecorator';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly logger: CustomLoggerService,
+    /*     private readonly logger: CustomLoggerService, */
   ) {
-    this.logger.setContext('Users');
+    /*     this.logger.setContext('Users'); */
   }
 
   @UsePipes(new ValidationPipe())
@@ -51,7 +50,7 @@ export class UsersController {
 
   @Get()
   async findAll() {
-    this.logger.log('Inside getAll');
+    /*     this.logger.log('Inside getAll'); */
     const users: User[] = await this.usersService.findAll();
     return users;
   }
@@ -60,7 +59,7 @@ export class UsersController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.usersService.findOne(id);
     if (!user) {
-      this.logger.error('The user is not found');
+      /*       this.logger.error('The user is not found'); */
       throw new NotFoundException();
     }
     return user;

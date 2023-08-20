@@ -4,15 +4,14 @@ import { SwaggerModule, OpenAPIObject } from '@nestjs/swagger';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import * as yaml from 'js-yaml';
-import { LogLevels } from './customLogger/logLevels';
 import { CustomLoggerService } from './customLogger/custom-logger.service';
 import { CustomExceptionFilter } from './customLogger/custom-exception-filter';
 
 async function bootstrap() {
-  const logLvl = process.env.LOG_LVL;
 
+  const customLogger = new CustomLoggerService();
   const app = await NestFactory.create(AppModule, {
-    logger: LogLevels[logLvl] || LogLevels['3'],
+    logger: customLogger,
     bufferLogs: true,
   });
 
@@ -24,12 +23,13 @@ async function bootstrap() {
       validatorUrl: null,
     },
   });
-  const errLogger = new CustomLoggerService('Errors');
+
   const httpAdapterHost = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new CustomExceptionFilter(errLogger, httpAdapterHost));
+  app.useGlobalFilters(new CustomExceptionFilter(customLogger, httpAdapterHost));
 
   await app.listen(process.env.PORT || 4000, () =>
     console.log(`App started on port ${process.env.APP_PORT}`),
   );
+
 }
 bootstrap();

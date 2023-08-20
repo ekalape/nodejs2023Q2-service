@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
     private jwtService: JwtService,
     private reflector: Reflector,
     private logger: CustomLoggerService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -33,9 +33,10 @@ export class AuthGuard implements CanActivate {
     const headers = request.headers as Headers & { authorization?: string };
 
     const [type, token] = headers.authorization?.split(' ') ?? [];
-    if (type !== 'Bearer' || !token) throw new UnauthorizedException();
+    if (type !== 'Bearer' || !token) throw new UnauthorizedException("Invalid access token");
 
     try {
+
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET_KEY,
       });
@@ -55,11 +56,10 @@ export class AuthGuard implements CanActivate {
           });
           if (rftDec.login === userName) return true;
         } catch (err) {
-          this.logger.error('Refresh token is out of date');
           throw new UnauthorizedException('Invalid refresh token');
         }
       }
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("Access token is expired");
     }
     return true;
   }

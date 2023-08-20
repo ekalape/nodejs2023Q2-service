@@ -1,23 +1,53 @@
 import { ConsoleLogger, Injectable, Scope } from '@nestjs/common';
-
 import { access, appendFile, stat, writeFile, constants } from 'fs/promises';
 import { EOL } from 'os';
 import { resolve } from 'path';
+import { getLogLevel } from './getLogLevel';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class CustomLoggerService extends ConsoleLogger {
-
+    private logLvls: string[]
     private errorIndex = 1;
     private logIndex = 1;
 
+    constructor(context?: string) {
+        super(context || "Initial");
+        this.logLvls = getLogLevel(process.env.LOG_LVL)
+        console.log('CustomLoggerService context:', this.logLvls);
+    }
+
+
     async error(message: any) {
-        await this.writeLog(message, this.context, 'errors', this.errorIndex);
-        super.error(message);
+        if (this.logLvls.includes("error")) {
+            await this.writeLog(message, `error on ${this.context}`, 'error', this.errorIndex);
+            super.error(message, this.context);
+        }
     }
     async log(message: string) {
-        await this.writeLog(message, this.context, 'log', this.logIndex);
-        super.log(message, this.context);
+        if (this.logLvls.includes("log")) {
+            await this.writeLog(message, this.context, 'log', this.logIndex);
+            super.log(message, this.context);
+        }
     }
+    async warn(message: string) {
+        if (this.logLvls.includes("warn")) {
+            await this.writeLog(message, `warning on ${this.context}`, 'log', this.logIndex);
+            super.warn(message, this.context);
+        }
+    }
+    async debug(message: string) {
+        if (this.logLvls.includes("debug")) {
+            await this.writeLog(message, this.context, 'log', this.logIndex);
+            super.debug(message, this.context);
+        }
+    }
+    async verbose(message: string) {
+        if (this.logLvls.includes("verbose")) {
+            await this.writeLog(message, this.context, 'log', this.logIndex);
+            super.verbose(message, this.context);
+        }
+    }
+
 
     private async writeLog(
         message: string,
@@ -29,7 +59,6 @@ export class CustomLoggerService extends ConsoleLogger {
         try {
             await access(filepath, constants.R_OK | constants.W_OK);
         } catch {
-            console.log('cannot access');
             await writeFile(filepath, `${EOL}`, 'utf-8');
         }
         const size = (await stat(filepath)).size;
