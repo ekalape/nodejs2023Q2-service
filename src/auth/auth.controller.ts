@@ -18,9 +18,8 @@ import { RefreshDto } from './dto/refresh.dto';
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
-    /*     private readonly logger: CustomLoggerService, */
-  ) { }
+    private readonly authService: AuthService /*     private readonly logger: CustomLoggerService, */,
+  ) {}
 
   @Post('signup')
   @Public()
