@@ -11,7 +11,7 @@ services:
     volumes:
       - ./src:/app/src
       - node_modules:/app/node_modules  
-      - logsDir:/app/logsDir/
+      - ${LOG_DIR}:/app/${LOG_DIR}/
 
     command: npm run start:migrate-watch
     environment:
@@ -62,12 +62,12 @@ volumes:
   node_modules:
     name: node_modules
   logsDir:
-    name: logsDir
+    name: ${LOG_DIR}
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: ./logsDir
+      device: ./${LOG_DIR}
     
 
 

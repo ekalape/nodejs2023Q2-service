@@ -1,5 +1,12 @@
 import { ConsoleLogger, Injectable, Scope } from '@nestjs/common';
-import { access, appendFile, stat, writeFile, constants } from 'fs/promises';
+import {
+  access,
+  appendFile,
+  stat,
+  writeFile,
+  constants,
+  readdir,
+} from 'fs/promises';
 import { EOL } from 'os';
 import { resolve } from 'path';
 import { getLogLevel } from './getLogLevel';
@@ -7,12 +14,12 @@ import { getLogLevel } from './getLogLevel';
 @Injectable({ scope: Scope.TRANSIENT })
 export class CustomLoggerService extends ConsoleLogger {
   private logLvls: string[];
-  private errorIndex = 1;
-  private logIndex = 1;
+  private logsdir: string;
 
   constructor(context?: string) {
     super(context || 'Server');
     this.logLvls = getLogLevel(process.env.LOG_LVL);
+    this.logsdir = process.env.LOG_DIR;
   }
 
   async error(message: string) {
@@ -48,44 +55,41 @@ export class CustomLoggerService extends ConsoleLogger {
 
   private async writeLog(message: string, context: string, filename: string) {
     const filepath = await this.getLogFile(filename);
-    try {
-      await access(filepath, constants.R_OK | constants.W_OK);
-    } catch {
-      await writeFile(filepath, `${EOL}`, 'utf-8');
-    }
     const date = new Date().toUTCString();
     const logMessage = `${date} -> [${context}] -> ${message} ${EOL}`;
     await appendFile(filepath, logMessage, 'utf-8');
   }
 
   private async getLogFile(filename: string) {
-    let filepath: string;
     if (filename === 'error') {
-      filepath = resolve('logsDir', `${filename}-${this.errorIndex}.txt`);
-      try {
-        await access(filepath, constants.R_OK | constants.W_OK);
-      } catch {
-        await writeFile(filepath, `${EOL}`, 'utf-8');
-      }
-      const size = (await stat(filepath)).size;
+      const { size, index } = await this.checkLogFile('error');
       if (size >= +process.env.LOG_FILE_SIZE * 1024) {
-        this.errorIndex += 1;
-        return resolve('logsDir', `${filename}-${this.errorIndex}.txt`);
+        return resolve(this.logsdir, `${filename}-${index + 1}.txt`);
       }
-      return filepath;
+      return resolve(this.logsdir, `${filename}-${index}.txt`);
     } else {
-      filepath = resolve('logsDir', `${filename}-${this.logIndex}.txt`);
-      try {
-        await access(filepath, constants.R_OK | constants.W_OK);
-      } catch {
-        await writeFile(filepath, `${EOL}`, 'utf-8');
-      }
-      const size = (await stat(filepath)).size;
+      const { size, index } = await this.checkLogFile('log');
       if (size >= +process.env.LOG_FILE_SIZE * 1024) {
-        this.logIndex += 1;
-        return resolve('logsDir', `${filename}-${this.logIndex}.txt`);
+        return resolve(this.logsdir, `${filename}-${index + 1}.txt`);
       }
-      return filepath;
+      return resolve(this.logsdir, `${filename}-${index}.txt`);
     }
+  }
+  private async checkLogFile(logName: string) {
+    let index = 0;
+    const dirlen = (await readdir(this.logsdir)).filter((d) =>
+      d.includes(logName),
+    ).length;
+    if (dirlen > 0) {
+      index = dirlen - 1;
+    }
+    const filepath = resolve('logsDir', `${logName}-${index}.txt`);
+    try {
+      await access(filepath, constants.R_OK | constants.W_OK);
+    } catch {
+      await writeFile(filepath, `${EOL}`, 'utf-8');
+    }
+    const size = (await stat(filepath)).size;
+    return { size, index };
   }
 }
