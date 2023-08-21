@@ -22,10 +22,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "dock:build": "docker build -t cat/library-service-app .",
     "dock:run": "docker run -dp 127.0.0.1:4100:4000 --name lib-service-container cat/library-service-app",
-    "dock:test": "docker exec -it lib-service-container npm run test",
+    "dock:test": "docker exec -it lib-service-container npm run test:auth",
     "dock:stop": "docker compose down",
     "dock:start": "docker compose up --build",
-    "dock:scan": "docker scout cves lib-service-library"
+    "dock:scan": "docker scout cves lib-service-library",
+    "dock:prisma-reset": "docker exec -it lib-service-container npx prisma migrate reset"
   },
   "dependencies": {
     "@nestjs/cli": "^10.1.10",
